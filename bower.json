@@ -1,0 +1,9 @@
+{
+  "name": "adn-angular",
+  "version": "0.0.1",
+  "main": "dist/adn-angular.min.js",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ]
+}
