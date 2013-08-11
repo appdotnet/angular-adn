@@ -5,5 +5,9 @@
   "ignore": [
     ".jshintrc",
     "**/*.txt"
-  ]
+  ],
+  "dependencies": {
+    "purl": "~2.3.1",
+    "angular": "~1.0.7"
+  }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn').factory('ApiClient', ['$rootScope', '$http', function ($rootScope, $http) {
+angular.module('adn', []).factory('ApiClient', ['$rootScope', '$http', 'ADNConfig', function ($rootScope, $http, ADNConfig) {
 
   var methods = ['get', 'head', 'post', 'put', 'delete', 'jsonp'];
 
@@ -8,7 +8,7 @@ angular.module('adn').factory('ApiClient', ['$rootScope', '$http', function ($ro
     return function (conf) {
       conf.headers = conf.headers || {};
       conf.headers.Authorization = 'Bearer ' + $rootScope.local.accessToken;
-      conf.url = window.location.origin + '/api/' + conf.url;
+      conf.url = ADNConfig.get('api_client_root', window.location.origin + '/api/') + conf.url;
       conf.method = method;
       if (method === 'post' && conf.data) {
         conf.data = jQuery.param(conf.data);

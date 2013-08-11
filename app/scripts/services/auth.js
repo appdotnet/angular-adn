@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn').factory('Auth', ['$rootScope', '$location', function ($rootScope, $location) {
+angular.module('adn', []).factory('Auth', ['$rootScope', '$location', function ($rootScope, $location) {
   $rootScope.local = JSON.parse((typeof(localStorage.data) !== 'undefined') ? localStorage.data : '{}');
   $rootScope.$watch('local', function () {
     localStorage.data = JSON.stringify($rootScope.local);
