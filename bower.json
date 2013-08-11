@@ -1,9 +1,13 @@
 {
   "name": "adn-angular",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/adn-angular.min.js",
   "ignore": [
     ".jshintrc",
     "**/*.txt"
-  ]
+  ],
+  "dependencies": {
+    "purl": "~2.3.1",
+    "angular": "~1.0.7"
+  }
 }

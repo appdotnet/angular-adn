@@ -1,6 +1,6 @@
 {
   "name": "adn-angular",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A bundle of angular modules for App.net",
   "main": "index.js",
   "scripts": {
