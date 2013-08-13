@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn', []).factory('ApiClient', ['$rootScope', '$http', 'ADNConfig', function ($rootScope, $http, ADNConfig) {
+angular.module('adn', []).factory('ApiClient', function ($rootScope, $http, ADNConfig) {
 
   var methods = ['get', 'head', 'post', 'put', 'delete', 'jsonp'];
 
@@ -18,12 +18,12 @@ angular.module('adn', []).factory('ApiClient', ['$rootScope', '$http', 'ADNConfi
     };
   };
 
-  var api_client = {};
+  var apiClient = {};
 
   _.each(methods, function (m) {
-    api_client[m] = dispatch(m);
+    apiClient[m] = dispatch(m);
   });
 
-  return api_client;
+  return apiClient;
 
-}]);
+});

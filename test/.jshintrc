@@ -3,7 +3,7 @@
   "browser": true,
   "esnext": true,
   "bitwise": true,
-  "camelcase": true,
+  "camelcase": false,
   "curly": false,
   "eqeqeq": true,
   "immed": true,
@@ -20,8 +20,13 @@
   "trailing": true,
   "smarttabs": true,
   "predef": [
+    "$",
     "angular",
-    "jQuery",
-    "_"
+    "describe",
+    "beforeEach",
+    "afterEach",
+    "inject",
+    "it",
+    "expect"
   ]
 }

@@ -1,13 +1,15 @@
 {
-  "name": "adn-angular",
+  "name": "angular-adn",
   "version": "0.0.4",
-  "main": "dist/adn-angular.min.js",
-  "ignore": [
-    ".jshintrc",
-    "**/*.txt"
-  ],
   "dependencies": {
     "purl": "~2.3.1",
-    "angular": "~1.0.7"
+    "underscore": "~1.5.1",
+    "angular-unstable": "~1.1.5",
+    "jquery": "~2.0.3"
+  },
+  "devDependencies": {
+    "angular-unstable": "latest",
+    "angular-mocks": "~1.0.7",
+    "jquery": "latest"
   }
 }

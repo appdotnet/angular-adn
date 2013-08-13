@@ -1,4 +1,6 @@
 /bower_components/
 /node_modules/
+/app/components
+libpeerconnection.log
 
 .DS_Store

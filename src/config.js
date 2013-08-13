@@ -6,14 +6,14 @@ angular.module('adn', []).provider('ADNConfig', function() {
   this.$get = function() {
     return {
       config: this.configuation,
-      getOrDefault: function (key, default_value) {
+      get: function (key, defaultValue) {
         if (this.config.hasOwnProperty(key)) {
           return this.config[key];
         }
 
-        return default_value;
+        return defaultValue;
       }
-    }
+    };
   };
 
   this.setConfig = function(conf) {
