@@ -9,8 +9,12 @@ files = [
   JASMINE_ADAPTER,
   'app/components/angular-unstable/angular.js',
   'app/components/jquery/jquery.js',
+  'app/components/purl/purl.js',
   'app/components/angular-mocks/angular-mocks.js',
-  'src/*.js',
+  'src/init.js',
+  'src/config.js',
+  'src/auth.js',
+  'src/api_client.js',
   'test/spec/*.js'
 ];
 

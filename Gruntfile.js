@@ -154,7 +154,12 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['<%= yo.src %>/<%= pkg.name %>.js'],
+        src: [
+          '<%= yo.src %>/init.js',
+          '<%= yo.src %>/config.js',
+          '<%= yo.src %>/auth.js',
+          '<%= yo.src %>/api_client.js'
+        ],
         dest: '<%= yo.dist %>/<%= pkg.name %>.js'
       }
     },
@@ -165,6 +170,12 @@ module.exports = function(grunt) {
       dist: {
         src: '<%= concat.dist.dest %>',
         dest: '<%= yo.dist %>/<%= pkg.name %>.min.js'
+      }
+    },
+    bump: {
+      options: {
+        files: ['package.json', 'bower.json'],
+        pushTo: 'origin'
       }
     }
   });
@@ -184,7 +195,7 @@ module.exports = function(grunt) {
   grunt.registerTask('release', [
     'test',
     'bump-only',
-    'dist',
+    'build',
     'bump-commit'
   ]);
 

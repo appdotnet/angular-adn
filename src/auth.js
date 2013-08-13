@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn', []).factory('Auth', function ($rootScope, $location) {
+angular.module('adn').factory('Auth', function ($rootScope, $location) {
   $rootScope.local = JSON.parse((typeof(localStorage.data) !== 'undefined') ? localStorage.data : '{}');
   $rootScope.$watch('local', function () {
     localStorage.data = JSON.stringify($rootScope.local);
@@ -18,8 +18,8 @@ angular.module('adn', []).factory('Auth', function ($rootScope, $location) {
       localStorage.clear();
     },
     login: function () {
+      $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url($location.absUrl()).fparam('access_token');
       $location.hash('');
-      $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url(window.location).fparam('access_token');
     }
   };
 

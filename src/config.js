@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn', []).provider('ADNConfig', function() {
+angular.module('adn').provider('ADNConfig', function() {
   this.configuation = {};
 
   this.$get = function() {

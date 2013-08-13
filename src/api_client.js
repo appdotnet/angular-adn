@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('adn', []).factory('ApiClient', function ($rootScope, $http, ADNConfig) {
+angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfig) {
 
   var methods = ['get', 'head', 'post', 'put', 'delete', 'jsonp'];
 
