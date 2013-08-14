@@ -1,5 +1,49 @@
 'use strict';
-angular.module('adn', []).factory('ApiClient', [
+angular.module('adn', []);'use strict';
+angular.module('adn').provider('ADNConfig', function () {
+  this.configuation = {};
+  this.$get = function () {
+    return {
+      config: this.configuation,
+      get: function (key, defaultValue) {
+        if (this.config.hasOwnProperty(key)) {
+          return this.config[key];
+        }
+        return defaultValue;
+      }
+    };
+  };
+  this.setConfig = function (conf) {
+    this.configuation = angular.extend({}, this.configuation, conf);
+  };
+});'use strict';
+angular.module('adn').factory('Auth', [
+  '$rootScope',
+  '$location',
+  function ($rootScope, $location) {
+    $rootScope.local = JSON.parse(typeof localStorage.data !== 'undefined' ? localStorage.data : '{}');
+    $rootScope.$watch('local', function () {
+      localStorage.data = JSON.stringify($rootScope.local);
+    }, true);
+    return {
+      isLoggedIn: function (local) {
+        if (local === undefined) {
+          local = $rootScope.local;
+        }
+        return local && typeof local.accessToken !== 'undefined';
+      },
+      logout: function () {
+        $rootScope.local = {};
+        localStorage.clear();
+      },
+      login: function () {
+        $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url($location.absUrl()).fparam('access_token');
+        $location.hash('');
+      }
+    };
+  }
+]);'use strict';
+angular.module('adn').factory('ApiClient', [
   '$rootScope',
   '$http',
   'ADNConfig',
@@ -31,47 +75,4 @@ angular.module('adn', []).factory('ApiClient', [
     });
     return apiClient;
   }
-]);'use strict';
-angular.module('adn', []).factory('Auth', [
-  '$rootScope',
-  '$location',
-  function ($rootScope, $location) {
-    $rootScope.local = JSON.parse(typeof localStorage.data !== 'undefined' ? localStorage.data : '{}');
-    $rootScope.$watch('local', function () {
-      localStorage.data = JSON.stringify($rootScope.local);
-    }, true);
-    return {
-      isLoggedIn: function (local) {
-        if (local === undefined) {
-          local = $rootScope.local;
-        }
-        return local && typeof local.accessToken !== 'undefined';
-      },
-      logout: function () {
-        $rootScope.local = {};
-        localStorage.clear();
-      },
-      login: function () {
-        $location.hash('');
-        $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url(window.location).fparam('access_token');
-      }
-    };
-  }
-]);'use strict';
-angular.module('adn', []).provider('ADNConfig', function () {
-  this.configuation = {};
-  this.$get = function () {
-    return {
-      config: this.configuation,
-      get: function (key, defaultValue) {
-        if (this.config.hasOwnProperty(key)) {
-          return this.config[key];
-        }
-        return defaultValue;
-      }
-    };
-  };
-  this.setConfig = function (conf) {
-    this.configuation = angular.extend({}, this.configuation, conf);
-  };
-});
+]);
