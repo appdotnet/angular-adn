@@ -149,7 +149,8 @@ module.exports = function(grunt) {
           '<%= yo.src %>/services/api_client.js',
           '<%= yo.src %>/services/user.js',
           '<%= yo.src %>/directives/adn_text.js',
-          '<%= yo.src %>/directives/user_search.js'
+          '<%= yo.src %>/directives/user_search.js',
+          '<%= yo.src %>/templates/templates.js'
         ],
         dest: '<%= yo.dist %>/<%= pkg.name %>.js'
       }
@@ -213,13 +214,13 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'ngtemplates',
     //'less:dist',
     'ngmin:dist',
     'uglify:dist'
   ]);
 
   grunt.registerTask('release', [
-    'ngtemplates',
     'test',
     'bump-only',
     'build',
