@@ -143,10 +143,13 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          '<%= yo.src %>/init.js',
-          '<%= yo.src %>/config.js',
-          '<%= yo.src %>/auth.js',
-          '<%= yo.src %>/api_client.js'
+          '<%= yo.src %>/services/init.js',
+          '<%= yo.src %>/services/config.js',
+          '<%= yo.src %>/services/auth.js',
+          '<%= yo.src %>/services/api_client.js',
+          '<%= yo.src %>/services/user.js',
+          '<%= yo.src %>/directives/adn_text.js',
+          '<%= yo.src %>/directives/user_search.js'
         ],
         dest: '<%= yo.dist %>/<%= pkg.name %>.js'
       }
@@ -167,7 +170,9 @@ module.exports = function(grunt) {
           '<%= yo.src %>/services/config.js',
           '<%= yo.src %>/services/auth.js',
           '<%= yo.src %>/services/api_client.js',
-          '<%= yo.src %>/directives/adn_text.js'
+          '<%= yo.src %>/services/user.js',
+          '<%= yo.src %>/directives/adn_text.js',
+          '<%= yo.src %>/directives/user_search.js'
         ],
         dest: '<%= yo.dist %>/<%= pkg.name %>.js'
       }

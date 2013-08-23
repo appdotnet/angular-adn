@@ -97,7 +97,7 @@ describe('Module: adn.adnText', function() {
   }));
 
 
-  it('should be disabled', inject(function($compile, $rootScope) {
+  it('should work', inject(function($compile, $rootScope) {
     var submit = elm.find('button');
     expect(submit.attr('disabled')).toBe(undefined);
     scope.$apply(function () {
@@ -114,5 +114,53 @@ describe('Module: adn.adnText', function() {
     expect(scope.sendText.calls.length).toEqual(1);
     expect(scope.message.processedMessage.text).toBe(test_string);
   }));
+
+});
+
+describe('Module: adn.User', function() {
+
+  beforeEach(module('adn'));
+
+  beforeEach(inject(function (User) {
+    User._pending = [];
+    User._cache = [];
+  }));
+
+  it('should partially update', inject(function(User) {
+    var new_user = new User(false, {id: 1});
+    expect(new_user.id).toBe(1);
+    expect(new_user.is_complete).toBe(false);
+    new_user.complete({
+      username: 'voidfiles',
+      name: 'Alex Kessinger'
+    });
+    expect(new_user.is_complete).toBe(true);
+    expect(new_user.username).toBe('voidfiles');
+    expect(new_user.text).toBe('@voidfiles (Alex Kessinger)');
+  }));
+
+  it('should do ad hoc updates', inject(function(User) {
+    expect(User.update()).toBe(undefined);
+    var new_user = new User(false, {id: 1});
+    User._cache[1] = new_user;
+    User._pending = [new_user];
+    expect(User._pending.length).toBe(1);
+    User.update(new_user);
+    expect(User._pending.length).toBe(0);
+    User._cache = {};
+    User.update(new_user);
+    expect(User._cache[1].id).toBe(1);
+  }));
+
+  it('Should only fetch as many users as it needs', inject(function(User) {
+    var new_user_1 = new User(false, {id: 1});
+    var new_user_2 = new User(false, {id: 2});
+    User._cache = {1: new_user_1};
+    User.bulk_get([1,2], false);
+    expect(User._pending.length).toBe(1);
+    expect(User._pending[0].id).toBe(2);
+  }));
+
+
 
 });

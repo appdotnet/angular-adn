@@ -1,2 +1,2 @@
 'use strict';
-angular.module('adn', []);
+angular.module('adn', ['ui']);

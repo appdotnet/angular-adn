@@ -14,4 +14,12 @@ angular.module("adn").run(["$templateCache", function($templateCache) {
     "</div>"
   );
 
+  $templateCache.put("templates/user-search.html",
+    "<div>\n" +
+    "  <!-- originally from ohe -->\n" +
+    "  <label class=\"control-label\" ng-bind='label'></label>\n" +
+    "  <input class='input-block-level' type=\"hidden\" ui-select2=\"usernameSelect\" ng-model=\"selectedUsers\" ng-multiple>\n" +
+    "</div>"
+  );
+
 }]);

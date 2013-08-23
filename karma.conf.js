@@ -9,13 +9,18 @@ files = [
   JASMINE_ADAPTER,
   'app/components/angular-unstable/angular.js',
   'app/components/jquery/jquery.js',
+  'app/components/underscore/underscore-min.js',
   'app/components/purl/purl.js',
+  'app/components/angular-ui/build/angular-ui.js',
+  'app/components/select2/select2.min.js',
   'app/components/angular-mocks/angular-mocks.js',
   'src/services/init.js',
   'src/services/config.js',
   'src/services/auth.js',
+  'src/services/user.js',
   'src/services/api_client.js',
   'src/directives/adn_text.js',
+  'src/directives/user_search.js',
   'src/templates/templates.js',
   'test/spec/*.js'
 ];
