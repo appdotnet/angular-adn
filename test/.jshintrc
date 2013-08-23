@@ -27,6 +27,7 @@
     "afterEach",
     "inject",
     "it",
-    "expect"
+    "expect",
+    "spyOn"
   ]
 }

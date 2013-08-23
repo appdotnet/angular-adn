@@ -44,6 +44,7 @@ module.exports = function(grunt) {
           src: [
             '.tmp',
             '<%= yo.dist %>/*',
+            '<%= yo.src %>/templates/templates.js',
             '!<%= yo.dist %>/.git*'
           ]
         }]
@@ -131,7 +132,9 @@ module.exports = function(grunt) {
         singleRun: true
       },
       server: {
-        autoWatch: true
+        autoWatch: true,
+        singleRun: false,
+        browsers: ['Chrome']
       }
     },
     ngmin: {
@@ -160,10 +163,11 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
-          '<%= yo.src %>/init.js',
-          '<%= yo.src %>/config.js',
-          '<%= yo.src %>/auth.js',
-          '<%= yo.src %>/api_client.js'
+          '<%= yo.src %>/services/init.js',
+          '<%= yo.src %>/services/config.js',
+          '<%= yo.src %>/services/auth.js',
+          '<%= yo.src %>/services/api_client.js',
+          '<%= yo.src %>/directives/adn_text.js'
         ],
         dest: '<%= yo.dist %>/<%= pkg.name %>.js'
       }
@@ -177,6 +181,17 @@ module.exports = function(grunt) {
         dest: '<%= yo.dist %>/<%= pkg.name %>.min.js'
       }
     },
+    ngtemplates: {
+      dist: {
+        options: {
+          base: '<%= yo.src %>',
+          module: 'adn',
+          prepend: ''
+        },
+        src: '<%= yo.src %>/templates/*.html',
+        dest: '<%= yo.src %>/templates/templates.js'
+      }
+    },
     bump: {
       options: {
         files: ['package.json', 'bower.json'],
@@ -186,6 +201,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('test', [
+    'ngtemplates',
     'jshint',
     'karma:unit'
   ]);
@@ -198,6 +214,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('release', [
+    'ngtemplates',
     'test',
     'bump-only',
     'build',

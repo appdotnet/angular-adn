@@ -1,0 +1,11 @@
+<div class="well-plain well-elevated">
+    <div>
+        <textarea class="editable input-flex" ng-model="textData.rawText" ng-trim="false" tabindex=1></textarea>
+    </div>
+    <div>
+      <span class="text-left char-count">{{ charCount }}</span>
+      <span class="pull-right">
+        <button class="btn btn-primary btn-small" tabindex=2 ng-disabled="charCount < 0" ng-click="buttonClick()">{{ buttonText }}</button>
+      </span>
+    </div>
+</div>

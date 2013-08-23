@@ -61,3 +61,58 @@ describe('Module: adn.Auth', function () {
     }));
   });
 });
+
+describe('Module: adn.adnText', function() {
+  var elm, scope;
+
+  // load the tabs code
+  beforeEach(module('adn'));
+
+  // load the templates
+  // beforeEach(module('tpl/tabs.html', 'tpl/pane.html'));
+
+  function randomString(len, charSet) {
+    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var random = '';
+    for (var i = 0; i < len; i++) {
+      var randomPoz = Math.floor(Math.random() * charSet.length);
+      random += charSet.substring(randomPoz,randomPoz+1);
+    }
+    return random;
+  }
+
+  beforeEach(inject(function($rootScope, $compile) {
+    // we might move this tpl into an html file as well...
+    elm = angular.element('<div adn-text button-text="Publish" on-button-click="sendText()" text-data="message" max-chars=256></div>');
+    scope = $rootScope;
+    scope.$apply(function () {
+      scope.message = {};
+      scope.sendText = function () {
+        return;
+      };
+    });
+    spyOn(scope, 'sendText');
+    $compile(elm)(scope);
+    scope.$digest();
+  }));
+
+
+  it('should be disabled', inject(function($compile, $rootScope) {
+    var submit = elm.find('button');
+    expect(submit.attr('disabled')).toBe(undefined);
+    scope.$apply(function () {
+      scope.message.rawText = randomString(257);
+    });
+    expect(submit.attr('disabled')).toBe('disabled');
+    var test_string = randomString(256);
+    scope.$apply(function () {
+      scope.message.rawText = test_string;
+    });
+    expect(submit.attr('disabled')).toBe(undefined);
+    $('button', elm).click();
+    expect(scope.sendText).toHaveBeenCalled();
+    expect(scope.sendText.calls.length).toEqual(1);
+    expect(scope.message.processedMessage.text).toBe(test_string);
+  }));
+
+});

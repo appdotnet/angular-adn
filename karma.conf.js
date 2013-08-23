@@ -11,10 +11,12 @@ files = [
   'app/components/jquery/jquery.js',
   'app/components/purl/purl.js',
   'app/components/angular-mocks/angular-mocks.js',
-  'src/init.js',
-  'src/config.js',
-  'src/auth.js',
-  'src/api_client.js',
+  'src/services/init.js',
+  'src/services/config.js',
+  'src/services/auth.js',
+  'src/services/api_client.js',
+  'src/directives/adn_text.js',
+  'src/templates/templates.js',
   'test/spec/*.js'
 ];
 
