@@ -28,10 +28,6 @@
             options.callback({
               results: results
             });
-          }).error(function () {
-            console.log('error', arguments);
-          }).always(function () {
-            console.log('always', arguments);
           });
           // This is a fucked up way to fix a weird fucking bug in angular
           // https://github.com/angular/angular.js/issues/2442

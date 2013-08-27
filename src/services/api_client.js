@@ -32,26 +32,34 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
     apiClient[m] = dispatch(m);
   });
 
-  apiClient.postJson = function (conf) {
+  var jsonMethod = function (method, conf) {
     conf.headers = conf.headers || {};
     conf.headers['Content-Type'] = 'application/json';
     if (!angular.isString(conf.data) && angular.isObject(conf.data) || angular.isArray(conf.data)) {
       conf.data = angular.toJson(conf.data);
     }
-    return apiClient.post(conf);
+    return apiClient[method](conf);
+  };
+
+  apiClient.postJson = function (conf) {
+    return jsonMethod('post', conf);
+  };
+
+  apiClient.putJson = function (conf) {
+    return jsonMethod('put', conf);
   };
 
 
  // look into $resource for this stuff
   apiClient.createChannel = function (channel) {
-    return apiClient.post({
+    return apiClient.postJson({
       url: '/channels',
       data: channel
     });
   };
 
   apiClient.updateChannel = function (channel, updates) {
-    return apiClient.put({
+    return apiClient.putJson({
       url: '/channels/' + channel.id,
       data: updates
     });
