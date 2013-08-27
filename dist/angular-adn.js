@@ -153,12 +153,6 @@ angular.module('adn').factory('ApiClient', [
         };
       }
     };
-    $rootScope.channels = [];
-    apiClient.getBroadcastChannels().success(function (data) {
-      $rootScope.channels = _.filter(data.data, function (channel) {
-        return channel.you_subscribed;
-      });
-    });
     return apiClient;
   }
 ]);(function () {

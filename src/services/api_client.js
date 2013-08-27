@@ -137,16 +137,6 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
     }
   };
 
-  // ugly hack?
-  $rootScope.channels = [];
-
-  apiClient.getBroadcastChannels().success(function (data) {
-    $rootScope.channels = _.filter(data.data, function (channel) {
-      return channel.you_subscribed;
-    });
-  });
-
-
   return apiClient;
 
 });
