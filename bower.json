@@ -1,6 +1,6 @@
 {
   "name": "angular-adn",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "dependencies": {
     "purl": "~2.3.1",
     "underscore": "~1.5.1",
