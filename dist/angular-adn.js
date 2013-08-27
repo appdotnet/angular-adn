@@ -107,7 +107,10 @@ angular.module('adn').factory('ApiClient', [
     apiClient.getBroadcastChannels = function () {
       return apiClient.get({
         url: '/channels',
-        params: { channel_types: 'net.app.core.broadcast' }
+        params: {
+          channel_types: 'net.app.core.broadcast',
+          count: 200
+        }
       });
     };
     apiClient.getChannel = function (channel_id) {
