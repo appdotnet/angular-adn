@@ -69,7 +69,8 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
     return apiClient.get({
       url: '/channels',
       params: {
-        channel_types: 'net.app.core.broadcast'
+        channel_types: 'net.app.core.broadcast',
+        count: 200
       }
     });
   };
