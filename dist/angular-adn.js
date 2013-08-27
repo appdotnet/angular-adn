@@ -68,6 +68,9 @@ angular.module('adn').factory('ApiClient', [
           conf.data = jQuery.param(conf.data);
           conf.headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }
+        if (method === 'get' && conf.data) {
+          conf.url = conf.url + '?' + jQuery.param(conf.data);
+        }
         return $http(conf);
       };
     };
@@ -111,13 +114,20 @@ angular.module('adn').factory('ApiClient', [
       return apiClient.delete({ url: '/channels/' + channel.id + '/subscribe' });
     };
     apiClient.createMessage = function (channel, message) {
-      return apiClient.post({
+      return apiClient.postJson({
         url: '/channels/' + channel.id + '/messages',
         data: message
       });
     };
-    apiClient.getMessages = function (channel) {
-      return apiClient.get({ url: '/channels/' + channel.id + '/messages' });
+    apiClient.getMessages = function (channel, include_annotations) {
+      var conf = {
+          url: '/channels/' + channel.id + '/messages',
+          data: {}
+        };
+      if (include_annotations) {
+        conf.data.include_annotations = 1;
+      }
+      return apiClient.get(conf);
     };
     apiClient.getMultipleUsers = function (ids) {
       return apiClient.get({ params: { ids: ids } });
@@ -260,38 +270,61 @@ angular.module('adn').factory('ApiClient', [
   });
 }());(function () {
   'use strict';
-  angular.module('adn').directive('userSearch', [
+  angular.module('adn').controller('UserSearchCtrl', [
+    '$scope',
     'User',
     'ApiClient',
-    function (User, ApiClient) {
-      return {
-        restrict: 'A',
-        controller: 'UserSearchCtrl',
-        templateUrl: 'templates/user-search.html',
-        replace: true,
-        scope: {
-          label: '@',
-          selectedUsers: '=',
-          include_users: '='
-        },
-        link: function (scope, element) {
-          scope.handleUserQuery = scope.handleUserQuery || function (options) {
+    function ($scope, User, ApiClient) {
+      var get_search_select2 = function (include_users) {
+        return {
+          multiple: true,
+          minimumInputLength: 1,
+          tokenSeparators: [
+            ',',
+            ' '
+          ],
+          createSearchChoice: function (term) {
+            return term;
+          },
+          width: 'resolve',
+          query: function (options) {
             if (options.term.charAt(0) !== '@' && options.term.charAt(0) !== '#') {
               options.term = '@' + options.term;
             }
             var data = {
                 q: options.term,
-                include_users: scope.include_users || 'any'
+                include_users: include_users || 'any'
               };
             ApiClient.searchUsers(data).success(function (data) {
-              var results = _.map(data.data, User.update);
+              var results = _.map(data.data, function (value) {
+                  return User.update(value);
+                });
               options.callback({ results: results });
+            }).error(function () {
+              console.log('error', arguments);
+            }).always(function () {
+              console.log('always', arguments);
             });
-          };
-        }
+            $scope.$apply();
+          }
+        };
       };
+      $scope.usernameSelect = get_search_select2();
     }
   ]);
+  angular.module('adn').directive('userSearch', function () {
+    return {
+      restrict: 'A',
+      controller: 'UserSearchCtrl',
+      templateUrl: 'templates/user-search.html',
+      replace: true,
+      scope: {
+        label: '=',
+        selectedUsers: '=',
+        include_users: '='
+      }
+    };
+  });
 }());angular.module('adn').run([
   '$templateCache',
   function ($templateCache) {

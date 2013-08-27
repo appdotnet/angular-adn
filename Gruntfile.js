@@ -64,7 +64,9 @@ module.exports = function(grunt) {
         files: [
           '<%= yo.src %>/{,*/}*.html',
           '{.tmp,<%= yo.src %>}/{,*/}*.css',
-          '{.tmp,<%= yo.src %>}/{,*/}*.js'
+          '{.tmp,<%= yo.src %>}/{,*/}*.js',
+          'test/preview/*.html',
+          'test/preview/*.js'
         ],
         options: {
           livereload: yoConfig.livereload
@@ -87,6 +89,20 @@ module.exports = function(grunt) {
               lrSnippet,
               mountFolder(connect, '.tmp'),
               mountFolder(connect, yoConfig.src)
+            ];
+          }
+        }
+      },
+      preview: {
+        options: {
+          middleware: function (connect) {
+            return [
+              lrSnippet,
+              mountFolder(connect, 'test/preview/'),
+              mountFolder(connect, 'src/'),
+              mountFolder(connect, 'app/'),
+              mountFolder(connect, yoConfig.dist)
+
             ];
           }
         }
@@ -228,5 +244,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('default', ['build']);
+
+  grunt.registerTask('preview', ['connect:preview', 'watch']);
 
 };

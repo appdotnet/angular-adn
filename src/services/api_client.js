@@ -12,9 +12,14 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
 
       conf.url = ADNConfig.get('api_client_root', 'https://alpha-api.app.net/stream/0/') + conf.url;
       conf.method = method;
+
       if (method === 'post' && conf.data && !conf.headers['Content-Type']) {
         conf.data = jQuery.param(conf.data);
         conf.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+      }
+
+      if (method === 'get' && conf.data) {
+        conf.url = conf.url + '?' + jQuery.param(conf.data);
       }
 
       return $http(conf);
@@ -80,16 +85,23 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
   };
 
   apiClient.createMessage = function (channel, message) {
-    return apiClient.post({
+    return apiClient.postJson({
       url: '/channels/' + channel.id + '/messages',
       data: message
     });
   };
 
-  apiClient.getMessages = function (channel) {
-    return apiClient.get({
+  apiClient.getMessages = function (channel, include_annotations) {
+    var conf = {
       url: '/channels/' + channel.id + '/messages',
-    });
+      data: {}
+    };
+
+    if (include_annotations) {
+      conf.data.include_annotations = 1;
+    }
+
+    return apiClient.get(conf);
   };
 
   apiClient.getMultipleUsers = function (ids) {
