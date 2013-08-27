@@ -78,22 +78,28 @@ angular.module('adn').factory('ApiClient', [
     _.each(methods, function (m) {
       apiClient[m] = dispatch(m);
     });
-    apiClient.postJson = function (conf) {
+    var jsonMethod = function (method, conf) {
       conf.headers = conf.headers || {};
       conf.headers['Content-Type'] = 'application/json';
       if (!angular.isString(conf.data) && angular.isObject(conf.data) || angular.isArray(conf.data)) {
         conf.data = angular.toJson(conf.data);
       }
-      return apiClient.post(conf);
+      return apiClient[method](conf);
+    };
+    apiClient.postJson = function (conf) {
+      return jsonMethod('post', conf);
+    };
+    apiClient.putJson = function (conf) {
+      return jsonMethod('put', conf);
     };
     apiClient.createChannel = function (channel) {
-      return apiClient.post({
+      return apiClient.postJson({
         url: '/channels',
         data: channel
       });
     };
     apiClient.updateChannel = function (channel, updates) {
-      return apiClient.put({
+      return apiClient.putJson({
         url: '/channels/' + channel.id,
         data: updates
       });
@@ -300,10 +306,6 @@ angular.module('adn').factory('ApiClient', [
                   return User.update(value);
                 });
               options.callback({ results: results });
-            }).error(function () {
-              console.log('error', arguments);
-            }).always(function () {
-              console.log('always', arguments);
             });
             $scope.$apply();
           }
