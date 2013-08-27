@@ -11,7 +11,7 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
         conf.headers.Authorization = 'Bearer ' + $rootScope.local.accessToken;
       }
 
-      conf = jQuery.extend({}, extra, conf);
+      conf = jQuery.extend(true, {}, extra, conf);
       conf.url = ADNConfig.get('api_client_root', 'https://alpha-api.app.net/stream/0/') + conf.url;
       conf.method = method;
 

@@ -63,7 +63,9 @@ angular.module('adn').factory('ApiClient', [
         if ($rootScope.local && $rootScope.local.accessToken) {
           conf.headers.Authorization = 'Bearer ' + $rootScope.local.accessToken;
         }
-        conf = jQuery.extend({}, extra, conf);
+        console.log(extra, conf);
+        conf = jQuery.extend(true, {}, extra, conf);
+        console.log(conf);
         conf.url = ADNConfig.get('api_client_root', 'https://alpha-api.app.net/stream/0/') + conf.url;
         conf.method = method;
         if (method === 'post' && conf.data && !conf.headers['Content-Type']) {
@@ -104,6 +106,7 @@ angular.module('adn').factory('ApiClient', [
       }, extra);
     };
     apiClient.getBroadcastChannels = function (extra) {
+      console.log(extra);
       return apiClient.get({
         url: '/channels',
         params: {

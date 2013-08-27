@@ -72,6 +72,13 @@ module.exports = function(grunt) {
           livereload: yoConfig.livereload
         }
       },
+      build: {
+        files: [
+          '<%= yo.src %>/{,*/}*.html',
+          '{.tmp,<%= yo.src %>}/{,*/}*.js',
+        ],
+        tasks: ['build']
+      },
       test: {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'qunit']
