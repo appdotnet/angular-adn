@@ -16,10 +16,12 @@ angular.module('adn').factory('Auth', function ($rootScope, $location) {
     logout: function () {
       $rootScope.local = {};
       localStorage.clear();
+      $rootScope.$broadcast('logout');
     },
     login: function () {
-      $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url($location.absUrl()).fparam('access_token');
+      $rootScope.local.accessToken = jQuery.url($location.absUrl()).fparam('access_token') || $rootScope.local.accessToken;
       $location.hash('');
+      $rootScope.$broadcast('login');
     }
   };
 
