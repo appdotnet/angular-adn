@@ -75,7 +75,7 @@ module.exports = function(grunt) {
       build: {
         files: [
           '<%= yo.src %>/{,*/}*.html',
-          '{.tmp,<%= yo.src %>}/{,*/}*.js',
+          '{.tmp,<%= yo.src %>}/{,*/}*.js'
         ],
         tasks: ['build']
       },

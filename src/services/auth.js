@@ -18,8 +18,8 @@ angular.module('adn').factory('Auth', function ($rootScope, $location) {
       localStorage.clear();
       $rootScope.$broadcast('logout');
     },
-    login: function () {
-      $rootScope.local.accessToken = jQuery.url($location.absUrl()).fparam('access_token') || $rootScope.local.accessToken;
+    login: function (accessToken) {
+      $rootScope.local.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || $rootScope.local.accessToken;
       $location.hash('');
       $rootScope.$broadcast('login');
     }
