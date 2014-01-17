@@ -25,31 +25,35 @@ describe('Module: adn.Auth', function () {
   }));
 
   it('should not be logged in by default', inject(function (Auth) {
-    expect(Auth.isLoggedIn()).toBe(false);
+    var user = Auth.currentUser();
+    expect(user.loggedIn).toBe(false);
   }));
 
   it('should fail to login if there is no hash', inject(function (Auth) {
     Auth.login();
-    expect(Auth.isLoggedIn()).toBe(false);
+    var user = Auth.currentUser();
+    expect(user.loggedIn).toBe(false);
   }));
 
   it('should succeded to login if there is a hash', inject(function (Auth, $location) {
     $location.hash('access_token=1234');
     Auth.login();
-    expect(Auth.isLoggedIn()).toBe(true);
+    var user = Auth.currentUser();
+    expect(user.loggedIn).toBe(true);
   }));
 
   it('should log a user out when calling logout', inject(function (Auth, $location) {
-    $location.hash('access_token=1234');
-    Auth.login();
-    expect(Auth.isLoggedIn()).toBe(true);
+    Auth.login('1234');
+    var user = Auth.currentUser();
+    expect(user.loggedIn).toBe(true);
     Auth.logout();
-    expect(Auth.isLoggedIn()).toBe(false);
+    user = Auth.currentUser();
+    expect(user.loggedIn).toBe(false);
   }));
 
   describe('localStorage test', function () {
     beforeEach(function () {
-      localStorage.data = '{"accessToken":"1234"}';
+      localStorage.user = '{"accessToken":"1234", "loggedIn": true}';
     });
 
     afterEach(function () {
@@ -57,7 +61,8 @@ describe('Module: adn.Auth', function () {
     });
 
     it('should automatically log a user in if localStorage already has an access token', inject(function (Auth) {
-      expect(Auth.isLoggedIn()).toBe(true);
+      var user = Auth.currentUser();
+      expect(user.loggedIn).toBe(true);
     }));
   });
 });

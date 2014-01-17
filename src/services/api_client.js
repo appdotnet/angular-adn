@@ -1,14 +1,15 @@
 'use strict';
 
-angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfig) {
+angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfig, Auth) {
 
   var methods = ['get', 'head', 'post', 'put', 'delete', 'jsonp'];
   var dispatch = function (method) {
     return function (conf, extra) {
       extra = extra || {};
       conf.headers = conf.headers || {};
-      if ($rootScope.local && $rootScope.local.accessToken) {
-        conf.headers.Authorization = 'Bearer ' + $rootScope.local.accessToken;
+      user = Auth.currentUser();
+      if (user.loggedIn) {
+        conf.headers.Authorization = 'Bearer ' + user.accessToken;
       }
 
       conf = jQuery.extend(true, {}, extra, conf);

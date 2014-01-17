@@ -21,24 +21,36 @@ angular.module('adn').factory('Auth', [
   '$rootScope',
   '$location',
   function ($rootScope, $location) {
-    $rootScope.local = JSON.parse(typeof localStorage.data !== 'undefined' ? localStorage.data : '{}');
-    $rootScope.$watch('local', function () {
-      localStorage.data = JSON.stringify($rootScope.local);
-    }, true);
+    var baseUser = {
+        loggedIn: false,
+        accessToken: null
+      };
+    var createUser = function () {
+      return angular.extend({}, baseUser);
+    };
+    var user;
+    if (typeof localStorage.user !== 'undefined') {
+      user = JSON.parse(localStorage.user);
+    } else {
+      user = createUser();
+    }
     return {
-      isLoggedIn: function (local) {
-        if (local === undefined) {
-          local = $rootScope.local;
-        }
-        return local && typeof local.accessToken !== 'undefined';
-      },
       logout: function () {
-        $rootScope.local = {};
         localStorage.clear();
+        user = createUser();
+        $rootScope.$broadcast('logout');
       },
-      login: function () {
-        $rootScope.local.accessToken = $rootScope.local.accessToken || jQuery.url($location.absUrl()).fparam('access_token');
+      login: function (accessToken) {
+        user.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || user.accessToken;
+        if (user.accessToken) {
+          user.loggedIn = true;
+        }
+        localStorage.user = JSON.stringify(user);
         $location.hash('');
+        $rootScope.$broadcast('login');
+      },
+      currentUser: function () {
+        return user;
       }
     };
   }
@@ -47,7 +59,8 @@ angular.module('adn').factory('ApiClient', [
   '$rootScope',
   '$http',
   'ADNConfig',
-  function ($rootScope, $http, ADNConfig) {
+  'Auth',
+  function ($rootScope, $http, ADNConfig, Auth) {
     var methods = [
         'get',
         'head',
@@ -60,12 +73,11 @@ angular.module('adn').factory('ApiClient', [
       return function (conf, extra) {
         extra = extra || {};
         conf.headers = conf.headers || {};
-        if ($rootScope.local && $rootScope.local.accessToken) {
-          conf.headers.Authorization = 'Bearer ' + $rootScope.local.accessToken;
+        user = Auth.currentUser();
+        if (user.loggedIn) {
+          conf.headers.Authorization = 'Bearer ' + user.accessToken;
         }
-        console.log(extra, conf);
         conf = jQuery.extend(true, {}, extra, conf);
-        console.log(conf);
         conf.url = ADNConfig.get('api_client_root', 'https://alpha-api.app.net/stream/0/') + conf.url;
         conf.method = method;
         if (method === 'post' && conf.data && !conf.headers['Content-Type']) {
@@ -106,9 +118,8 @@ angular.module('adn').factory('ApiClient', [
       }, extra);
     };
     apiClient.getBroadcastChannels = function (extra) {
-      console.log(extra);
       return apiClient.get({
-        url: '/channels',
+        url: '/users/me/channels',
         params: {
           channel_types: 'net.app.core.broadcast',
           count: 200

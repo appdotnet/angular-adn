@@ -1,27 +1,37 @@
 'use strict';
 
 angular.module('adn').factory('Auth', function ($rootScope, $location) {
-  $rootScope.local = JSON.parse((typeof(localStorage.data) !== 'undefined') ? localStorage.data : '{}');
-  $rootScope.$watch('local', function () {
-    localStorage.data = JSON.stringify($rootScope.local);
-  }, true);
+  var baseUser = {
+    loggedIn: false,
+    accessToken: null,
+  };
+  var createUser = function () {
+    return angular.extend({}, baseUser);
+  };
+  var user;
+  if (typeof(localStorage.user) !== 'undefined') {
+    user = JSON.parse(localStorage.user);
+  } else {
+    user = createUser();
+  }
 
   return {
-    isLoggedIn: function (local) {
-      if(local === undefined) {
-        local = $rootScope.local;
-      }
-      return local && typeof(local.accessToken) !== 'undefined';
-    },
     logout: function () {
-      $rootScope.local = {};
       localStorage.clear();
+      user = createUser();
       $rootScope.$broadcast('logout');
     },
     login: function (accessToken) {
-      $rootScope.local.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || $rootScope.local.accessToken;
+      user.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || user.accessToken;
+      if (user.accessToken) {
+        user.loggedIn = true;
+      }
+      localStorage.user = JSON.stringify(user);
       $location.hash('');
       $rootScope.$broadcast('login');
+    },
+    currentUser: function () {
+      return user;
     }
   };
 
