@@ -7,7 +7,7 @@ angular.module('adn').factory('ApiClient', function ($rootScope, $http, ADNConfi
     return function (conf, extra) {
       extra = extra || {};
       conf.headers = conf.headers || {};
-      user = Auth.currentUser();
+      var user = Auth.currentUser();
       if (user.loggedIn) {
         conf.headers.Authorization = 'Bearer ' + user.accessToken;
       }
