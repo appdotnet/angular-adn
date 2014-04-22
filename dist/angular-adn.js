@@ -90,10 +90,6 @@ angular.module('adn').provider('Auth', function () {
       };
     }
   ];
-  this.$get.$inject = [
-    '$rootScope',
-    '$location'
-  ];
   this.chooseStorageEngine = function (engine) {
     if (storages[engine]) {
       storageEngine = storages[engine];
