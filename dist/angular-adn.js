@@ -17,44 +17,89 @@ angular.module('adn').provider('ADNConfig', function () {
     this.configuation = angular.extend({}, this.configuation, conf);
   };
 });'use strict';
-angular.module('adn').factory('Auth', [
-  '$rootScope',
-  '$location',
-  function ($rootScope, $location) {
-    var baseUser = {
-        loggedIn: false,
-        accessToken: null
-      };
-    var createUser = function () {
-      return angular.extend({}, baseUser);
-    };
-    var user;
-    if (typeof localStorage.user !== 'undefined') {
-      user = JSON.parse(localStorage.user);
-    } else {
-      user = createUser();
-    }
-    return {
-      logout: function () {
-        localStorage.clear();
-        user = createUser();
-        $rootScope.$broadcast('logout');
-      },
-      login: function (accessToken) {
-        user.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || user.accessToken;
-        if (user.accessToken) {
-          user.loggedIn = true;
+angular.module('adn').provider('Auth', function () {
+  var LS = function () {
+      return {
+        clear: function () {
+          localStorage.clear();
+        },
+        get: function (key) {
+          return localStorage[key];
+        },
+        set: function (key, value) {
+          localStorage[key] = value;
+          return;
         }
-        localStorage.user = JSON.stringify(user);
-        $location.hash('');
-        $rootScope.$broadcast('login');
-      },
-      currentUser: function () {
-        return user;
-      }
+      };
+    }();
+  var MS = function () {
+      var inMemory = {};
+      return {
+        clear: function () {
+          inMemory = {};
+        },
+        get: function (key) {
+          return inMemory[key];
+        },
+        set: function (key, value) {
+          inMemory[key] = value;
+          return;
+        }
+      };
+    }();
+  var storages = {
+      memory: MS,
+      localStorage: LS
     };
-  }
-]);'use strict';
+  var baseUser = {
+      loggedIn: false,
+      accessToken: null
+    };
+  var createUser = function () {
+    return angular.extend({}, baseUser);
+  };
+  var storageEngine = storages.localStorage;
+  this.$get = [
+    '$rootScope',
+    '$location',
+    function ($rootScope, $location) {
+      var user;
+      if (typeof storageEngine.get('user') !== 'undefined') {
+        user = JSON.parse(storageEngine.get('user'));
+      } else {
+        user = createUser();
+      }
+      return {
+        logout: function () {
+          storageEngine.clear();
+          user = createUser();
+          $rootScope.$broadcast('logout');
+        },
+        login: function (accessToken) {
+          user.accessToken = accessToken || jQuery.url($location.absUrl()).fparam('access_token') || user.accessToken;
+          if (user.accessToken) {
+            user.loggedIn = true;
+          }
+          storageEngine.set('user', JSON.stringify(user));
+          $location.hash('');
+          $rootScope.$broadcast('login');
+        },
+        currentUser: function () {
+          return user;
+        }
+      };
+    }
+  ];
+  this.$get.$inject = [
+    '$rootScope',
+    '$location'
+  ];
+  this.chooseStorageEngine = function (engine) {
+    if (storages[engine]) {
+      storageEngine = storages[engine];
+    }
+  };
+});'use strict';
 angular.module('adn').factory('ApiClient', [
   '$rootScope',
   '$http',
@@ -105,6 +150,7 @@ angular.module('adn').factory('ApiClient', [
     apiClient.putJson = function (conf, extra) {
       return jsonMethod('put', conf, extra);
     };
+    // look into $resource for this stuff
     apiClient.createChannel = function (channel, extra) {
       return apiClient.postJson({
         url: '/channels',
@@ -154,6 +200,7 @@ angular.module('adn').factory('ApiClient', [
         url: '/users/search'
       }, extra);
     };
+    // misc stuff
     apiClient.getChannelMetadata = function (channel) {
       var annotation = _.find(channel.annotations, function (annotation) {
           return annotation.type === 'net.app.core.broadcast.metadata' && annotation.value.title && annotation.value.description;
@@ -257,6 +304,7 @@ angular.module('adn').factory('ApiClient', [
         if (scope.textData.rawText === undefined) {
           scope.textData.rawText = '';
         }
+        // until angular > 1.1.1, ng-trim isn't an option so this won't be fired on whitespace from scope.text
         scope.updateCounter = function () {
           scope.charCount = scope.maxChars - scope.offset - scope.textData.rawText.length;
         };
@@ -264,6 +312,8 @@ angular.module('adn').factory('ApiClient', [
         scope.updateCounter();
         scope.buttonClick = function () {
           if (scope.textData.rawText.length <= scope.maxChars) {
+            // processedMessage is what we should send to the server
+            // rawText is what should be in the text box that gets processed into text
             scope.textData.processedMessage = { text: scope.textData.rawText };
             scope.onButtonClick();
           }
@@ -285,6 +335,7 @@ angular.module('adn').factory('ApiClient', [
     'User',
     'ApiClient',
     function ($scope, User, ApiClient) {
+      // autocomplete
       var get_search_select2 = function (include_users) {
         return {
           multiple: true,
@@ -311,6 +362,8 @@ angular.module('adn').factory('ApiClient', [
                 });
               options.callback({ results: results });
             });
+            // This is a fucked up way to fix a weird fucking bug in angular
+            // https://github.com/angular/angular.js/issues/2442
             $scope.$apply();
           }
         };
