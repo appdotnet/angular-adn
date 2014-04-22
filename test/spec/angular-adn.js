@@ -17,11 +17,12 @@ describe('Module: adn.ADNConfig', function () {
 });
 
 describe('Module: adn.Auth', function () {
-  var scope, $sandbox, $compile, $timeout;
+  var scope, $sandbox, $compile, $timeout, AP;
 
   // load the controller's module
-  beforeEach(module('adn', function($locationProvider) {
+  beforeEach(module('adn', function($locationProvider, AuthProvider) {
     $locationProvider.html5Mode(true).hashPrefix('');
+    AP = AuthProvider;
   }));
 
   it('should not be logged in by default', inject(function (Auth) {
@@ -65,6 +66,65 @@ describe('Module: adn.Auth', function () {
       expect(user.loggedIn).toBe(true);
     }));
   });
+
+  describe('localStorage test', function () {
+    beforeEach(function () {
+      localStorage.user = '{"accessToken":"1234", "loggedIn": true}';
+    });
+
+    afterEach(function () {
+      localStorage.clear();
+    });
+
+    it('should automatically log a user in if localStorage already has an access token', inject(function (Auth) {
+      var user = Auth.currentUser();
+      expect(user.loggedIn).toBe(true);
+    }));
+  });
+
+  describe('Test in memory storage for auth details', function () {
+
+    var AP;
+
+    beforeEach(function () {
+      // Initialize the service provider
+      // by injecting it to a fake module's config block
+      var fakeModule = angular.module('test.app.config', function () {});
+      fakeModule.config(function (AuthProvider) {
+        AP = AuthProvider;
+      });
+      // Initialize test.app injector
+      module('adn', 'test.app.config');
+
+      // Kickstart the injectors previously registered
+      // with calls to angular.mock.module
+      inject(function ($location, Auth) {});
+    });
+
+    describe('with custom configuration', function () {
+      it('tests the providers internal function', inject(function ($location, $injector) {
+        // check sanity
+        expect(AP).not.toBe(undefined);
+        // configure the provider
+        AP.chooseStorageEngine('memory');
+        // test an instance of the provider for
+        // the custom configuration changes
+        var Auth = $injector.invoke(AP.$get);
+        var user = Auth.currentUser();
+        expect(user).not.toBe(undefined);
+        expect(user.loggedIn).toBe(false);
+
+        $location.hash('access_token=1234');
+        Auth.login();
+        user = Auth.currentUser();
+        expect(user.loggedIn).toBe(true);
+        Auth.logout();
+        user = Auth.currentUser();
+        expect(user.loggedIn).toBe(false);
+      }));
+    });
+  });
+
 });
 
 describe('Module: adn.adnText', function() {
